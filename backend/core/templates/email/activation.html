@@ -1,0 +1,68 @@
+{% load i18n static %}
+
+{% block subject %}
+{% blocktrans %}Welcome to Code Whisper Garden - Activate Your Account{% endblocktrans %}
+{% endblock subject %}
+
+{% block text_body %}
+{% blocktrans %}Hello,{% endblocktrans %}
+
+{% blocktrans %}Welcome to {{ site_name }}! We're excited to have you on board.{% endblocktrans %}
+
+{% trans "To get started, please activate your account by clicking the link below:" %}
+{{ protocol }}://{{ domain }}/{{ url|safe }}
+
+{% trans "Thank you for joining us! If you have any questions, feel free to reach out." %}
+
+{% blocktrans %}Best regards,{% endblocktrans %}
+{% blocktrans %}The {{ site_name }} Team{% endblocktrans %}
+{% endblock text_body %}
+
+{% block html_body %}
+<div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; background-color: #ffffff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+    <!-- Logo and Motto -->
+    <p style="text-align: center;">
+        <!-- <img src="https://mlicayan.pythonanywhere.com/static/images/Logo.png" alt="{{ site_name }} Logo" style="max-width: 150px; height: auto; pointer-events: none;"> -->
+    </p>
+    <p style="text-align: center; font-size: 24px; font-style: italic; color: #1A1851; margin-bottom: 30px;">
+        <strong>Your Code Garden Awaits</strong>
+    </p>
+
+    <div style="padding: 20px; background-color: #f8f9fa; border-radius: 5px;">
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            {% blocktrans %}Welcome to {{ site_name }}! We're excited to have you on board.{% endblocktrans %}
+        </p>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            {% trans "To get started, please activate your account by clicking the button below:" %}
+        </p>
+
+        <p style="text-align: center; margin: 30px 0;">
+            <a href="{{ domain }}/{{ url|safe }}" style="text-decoration: none;">
+                <button style="
+                    background-color: #1A1851; 
+                    color: white; 
+                    padding: 15px 30px; 
+                    font-weight: 600; 
+                    font-size: 18px; 
+                    border: none; 
+                    cursor: pointer; 
+                    border-radius: 8px; 
+                    transition: all 0.3s ease;
+                    box-shadow: 0 0 15px rgba(26, 24, 81, 0.3);">
+                    {% trans "Activate Your Account" %}
+                </button>
+            </a>
+        </p>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333;">
+            {% trans "Thank you for joining us! If you have any questions, feel free to reach out." %}
+        </p>
+
+        <p style="font-size: 16px; line-height: 1.6; color: #333; margin-top: 30px;">
+            {% blocktrans %}Best regards,{% endblocktrans %}<br>
+            {% blocktrans %}The {{ site_name }} Team{% endblocktrans %}
+        </p>
+    </div>
+</div>
+{% endblock html_body %}
