@@ -2,6 +2,7 @@ import axios from "axios";
 
 const API_URL = "http://127.0.0.1:8000/api/v1";
 
+
 export const fetchCodeSnippets = async (): Promise<CodeSnippet[]> => {
   try {
     const response = await axios.get<CodeSnippet[]>(`${API_URL}/snippet/snippet-list/`);

@@ -1,7 +1,5 @@
 from django.contrib import admin
-from .models import CodeSnippet, PracticeExercise, CodeExecution
+from .models import CodeSnippet
 
 # Register your models here.
 admin.site.register(CodeSnippet)
-admin.site.register(PracticeExercise)
-admin.site.register(CodeExecution)

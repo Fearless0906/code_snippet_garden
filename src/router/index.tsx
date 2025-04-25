@@ -13,7 +13,6 @@ import { RootState } from "../auth/store/store";
 import AboutPage from "../pages/About";
 import TopicsPage from "../pages/Topics";
 import LanguagesPage from "../pages/Languages";
-import PracticeExercises from "../pages/PracticeExercises";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
@@ -69,10 +68,6 @@ const router = createBrowserRouter([
       {
         path: "/about",
         element: <AboutPage />,
-      },
-      {
-        path: "/practice/:id",
-        element: <PracticeExercises />,
       },
       {
         path: "/dashboard/code-snippet/:id",
