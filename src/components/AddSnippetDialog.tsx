@@ -22,6 +22,8 @@ import { Textarea } from "./ui/textarea";
 import { createSnippet, CreateSnippetData } from "../data/snippet";
 import SpinnerLoader from "./Loader/SpinnerLoader";
 import { ScrollArea } from "./ui/scroll-area";
+import SnippetForm from "./Ai_Snippets";
+import { Separator } from "./ui/separator";
 
 interface AddSnippetDialogProps {
   onSnippetCreated: () => void;
@@ -35,7 +37,8 @@ const AddSnippetDialog = ({ onSnippetCreated }: AddSnippetDialogProps) => {
     summary: "",
     snippet: "",
     tags: [],
-    difficultyLevel: "beginner",
+    difficulty_level: "beginner",
+    is_public: true,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -62,7 +65,8 @@ const AddSnippetDialog = ({ onSnippetCreated }: AddSnippetDialogProps) => {
         summary: "",
         snippet: "",
         tags: [],
-        difficultyLevel: "beginner",
+        difficulty_level: "beginner",
+        is_public: true,
       });
       onSnippetCreated(); // Call the refresh callback
     } catch (error) {
@@ -85,122 +89,150 @@ const AddSnippetDialog = ({ onSnippetCreated }: AddSnippetDialogProps) => {
     }));
   };
 
+  const handleAIGenerated = (
+    tags: string[],
+    description: string,
+    language: string,
+    title: string
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      summary: description,
+      tags: tags,
+      language: language.charAt(0).toUpperCase() + language.slice(1),
+      title: title,
+    }));
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default">Add Snippet</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[625px] bg-background max-h-[97vh]">
-        <DialogHeader className="sticky top-0 bg-background pb-6 border-b">
-          <DialogTitle>Add New Code Snippet</DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground">
-            Fill in the details below to create a new code snippet.
+      <DialogContent className="sm:max-w-[1200px] bg-background max-h-[97vh]">
+        <DialogHeader className="sticky top-0 z-10 bg-background pb-6 border-b w-[90%]">
+          <DialogTitle className="text-2xl font-semibold ">
+            Add New Code Snippet
+          </DialogTitle>
+          <DialogDescription className="text-base text-muted-foreground">
+            Use AI to analyze your code or manually fill in the details.
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[calc(97vh-8rem)] pr-4">
-          <form onSubmit={handleSubmit} className="grid gap-6 py-6">
-            <div className="grid gap-4">
-              <Label htmlFor="title" className="text-sm font-medium">
-                Title
-              </Label>
-              <Input
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                placeholder="Enter snippet title"
-                required
-                className="h-11"
-              />
+          <div className="flex gap-8">
+            <div className="w-1/2">
+              <SnippetForm onGenerateResults={handleAIGenerated} />
             </div>
-            <div className="grid gap-4">
-              <Label htmlFor="language" className="text-sm font-medium">
-                Language
-              </Label>
-              <Input
-                id="language"
-                name="language"
-                value={formData.language}
-                onChange={handleChange}
-                placeholder="e.g. JavaScript, Python, etc."
-                required
-                className="h-11"
-              />
+            <Separator orientation="vertical" className="h-auto" />
+            <div className="w-1/2">
+              <form onSubmit={handleSubmit} className="space-y-6 py-6">
+                <Input
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  placeholder="Title"
+                  className="h-12 text-lg font-medium"
+                />
+
+                <Input
+                  name="language"
+                  value={formData.language}
+                  onChange={handleChange}
+                  placeholder="Programming Language"
+                  className="h-11"
+                />
+
+                <Textarea
+                  name="summary"
+                  value={formData.summary}
+                  onChange={handleChange}
+                  placeholder="Description"
+                  className="min-h-[100px]"
+                />
+
+                <Textarea
+                  name="snippet"
+                  value={formData.snippet}
+                  onChange={handleChange}
+                  placeholder="Code Snippet"
+                  className="min-h-[200px] font-mono text-sm"
+                />
+
+                <Input
+                  name="tags"
+                  value={
+                    Array.isArray(formData.tags)
+                      ? formData.tags.join(", ")
+                      : formData.tags
+                  }
+                  onChange={handleChange}
+                  placeholder="Tags (comma-separated)"
+                  className="h-11"
+                />
+
+                <div className="flex gap-4">
+                  <div className="grid gap-4">
+                    <Label
+                      htmlFor="difficultyLevel"
+                      className="text-sm font-medium"
+                    >
+                      Difficulty Level
+                    </Label>
+                    <Select
+                      name="difficulty_level"
+                      value={formData.difficulty_level}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          difficulty_level:
+                            value as CreateSnippetData["difficulty_level"],
+                        }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select difficulty" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="beginner">Beginner</SelectItem>
+                        <SelectItem value="intermediate">
+                          Intermediate
+                        </SelectItem>
+                        <SelectItem value="advanced">Advanced</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid gap-4">
+                    <Label className="text-sm font-medium">Visibility</Label>
+                    <Select
+                      name="is_public"
+                      value={formData.is_public ? "public" : "private"}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          is_public: value === "public",
+                        }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select visibility" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="public">Public</SelectItem>
+                        <SelectItem value="private">Private</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full h-11"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? <SpinnerLoader /> : "Create Snippet"}
+                </Button>
+              </form>
             </div>
-            <div className="grid gap-4">
-              <Label htmlFor="summary" className="text-sm font-medium">
-                Summary
-              </Label>
-              <Textarea
-                id="summary"
-                name="summary"
-                value={formData.summary}
-                onChange={handleChange}
-                placeholder="Brief description of the snippet"
-                required
-                className="h-11"
-              />
-            </div>
-            <div className="grid gap-4">
-              <Label htmlFor="snippet" className="text-sm font-medium">
-                Code Snippet
-              </Label>
-              <Textarea
-                id="snippet"
-                name="snippet"
-                value={formData.snippet}
-                onChange={handleChange}
-                placeholder="Paste your code here"
-                className="min-h-[150px] font-mono h-11"
-                required
-              />
-            </div>
-            <div className="grid gap-4">
-              <Label htmlFor="tags" className="text-sm font-medium">
-                Tags (comma-separated)
-              </Label>
-              <Input
-                id="tags"
-                name="tags"
-                value={
-                  Array.isArray(formData.tags)
-                    ? formData.tags.join(", ")
-                    : formData.tags
-                }
-                onChange={handleChange}
-                placeholder="e.g. frontend, hooks, state"
-                className="h-11"
-              />
-            </div>
-            <div className="grid gap-4">
-              <Label htmlFor="difficultyLevel" className="text-sm font-medium">
-                Difficulty Level
-              </Label>
-              <Select
-                name="difficultyLevel"
-                value={formData.difficultyLevel}
-                onValueChange={(value) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    difficultyLevel:
-                      value as CreateSnippetData["difficultyLevel"],
-                  }))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select difficulty" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="beginner">Beginner</SelectItem>
-                  <SelectItem value="intermediate">Intermediate</SelectItem>
-                  <SelectItem value="advanced">Advanced</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <Button type="submit" className="mt-4" disabled={isSubmitting}>
-              {isSubmitting ? <SpinnerLoader /> : "Create Snippet"}
-            </Button>
-          </form>
+          </div>
         </ScrollArea>
       </DialogContent>
     </Dialog>

@@ -1,16 +1,29 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { CodeSnippet, getSnippetById } from "../data/snippet";
-import { ChevronLeft, Bookmark } from "lucide-react";
+import {
+  CodeSnippet,
+  getSnippetById,
+  toggleSaveSnippet,
+} from "../data/snippet";
+import { ChevronLeft, Bookmark, BookmarkCheck } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import CodeBlock from "../components/CodeBlocks";
+import SpinnerLoader from "../components/Loader/SpinnerLoader";
+import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import {
+  incrementSavedCount,
+  decrementSavedCount,
+} from "../auth/store/slices/savedSnippetsSlice";
 
 const SnippetDetailPage = () => {
+  const dispatch = useDispatch();
   const { id } = useParams();
   const navigate = useNavigate();
   const [snippet, setSnippet] = useState<CodeSnippet | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSaved, setIsSaved] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchSnippet = async () => {
@@ -22,6 +35,7 @@ const SnippetDetailPage = () => {
           return;
         }
         setSnippet(data);
+        setIsSaved(Boolean(data.saved)); // Ensure boolean value
       } catch (error) {
         console.error("Error fetching snippet:", error);
         navigate("/not-found");
@@ -43,10 +57,37 @@ const SnippetDetailPage = () => {
     return docsUrls[language] || "#";
   };
 
+  const handleSave = async () => {
+    if (!id || !snippet) return;
+    try {
+      setLoading(true);
+      const updatedSnippet = await toggleSaveSnippet(id, !isSaved);
+      setSnippet(updatedSnippet);
+      setIsSaved(updatedSnippet.saved);
+
+      // Update saved count
+      if (updatedSnippet.saved) {
+        dispatch(incrementSavedCount());
+      } else {
+        dispatch(decrementSavedCount());
+      }
+
+      toast.success(
+        isSaved
+          ? "Snippet unsaved successfully!"
+          : "Snippet saved successfully!"
+      );
+    } catch (error) {
+      console.error("Failed to toggle save status:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        Loading...
+        <SpinnerLoader />
       </div>
     );
   }
@@ -76,13 +117,26 @@ const SnippetDetailPage = () => {
                   <Badge variant="outline" className="uppercase">
                     {snippet.language}
                   </Badge>
-                  <Badge variant="secondary">{snippet.difficultyLevel}</Badge>
+                  <Badge variant="secondary">{snippet.difficulty_level}</Badge>
                 </div>
                 <h1 className="text-3xl font-bold mb-2">{snippet.title}</h1>
               </div>
-              <Button variant="outline" size="sm" className="h-9">
-                <Bookmark className="mr-2 h-4 w-4" />
-                Save
+              <Button
+                variant={isSaved ? "default" : "outline"}
+                size="sm"
+                className={`h-9 transition-all duration-200 ${
+                  isSaved
+                    ? "bg-primary/90 hover:bg-primary"
+                    : "hover:border-primary/50"
+                }`}
+                onClick={handleSave}
+              >
+                {isSaved ? (
+                  <BookmarkCheck className="mr-2 h-4 w-4" />
+                ) : (
+                  <Bookmark className="mr-2 h-4 w-4" />
+                )}
+                {isSaved ? "Saved" : "Save"}
               </Button>
             </div>
 

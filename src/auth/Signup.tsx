@@ -35,7 +35,7 @@ const Signup = () => {
   };
 
   const handleSignIn = () => {
-    navigate("/");
+    navigate("/login");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

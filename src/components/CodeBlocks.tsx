@@ -1,43 +1,49 @@
 import { useState } from "react";
 import { Check, Copy } from "lucide-react";
-import { cn } from "../lib/utils";
+import { cn } from "../lib/utils"; // Make sure this is the correct path
 import { toast } from "sonner";
+import { Button } from "../components/ui/button";
+import { CodeBlock } from "../components/ui/code-block";
 
-interface CodeBlockProps {
+interface CodeBlocksProps {
   code: string;
   language: string;
   className?: string;
 }
 
-const CodeBlock = ({ code, language, className }: CodeBlockProps) => {
+const CodeBlocks = ({ code, language, className }: CodeBlocksProps) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(code);
     setCopied(true);
-    toast("Copied to clipboard", {
-      description: "Code snippet has been copied to your clipboard",
+    toast.success("Copied to clipboard", {
+      description: "The code has been copied successfully.",
     });
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className={cn("code-block", className)}>
-      <div className="code-block-header">
-        <span className="font-medium">{language}</span>
-        <button
+    <div
+      className={cn("border rounded-lg overflow-hidden bg-muted/10", className)}
+    >
+      <div className="flex items-center justify-between px-4 py-2 bg-muted">
+        <span className="text-sm font-medium text-muted-foreground">
+          {language}
+        </span>
+        <Button
+          size="icon"
+          variant="ghost"
           onClick={handleCopy}
-          className="text-muted-foreground hover:text-foreground"
           aria-label="Copy code"
+          className="text-muted-foreground hover:text-foreground"
         >
           {copied ? <Check size={16} /> : <Copy size={16} />}
-        </button>
+        </Button>
       </div>
-      <pre className="p-4">
-        <code>{code}</code>
-      </pre>
+      <CodeBlock language={language} code={code} className="rounded-none" />
     </div>
   );
 };
 
-export default CodeBlock;
+export default CodeBlocks;

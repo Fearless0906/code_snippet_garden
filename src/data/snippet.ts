@@ -24,16 +24,19 @@ export interface CodeSnippet {
     summary: string;
     snippet: string;
     tags: string[];
-    difficultyLevel: "beginner" | "intermediate" | "advanced";
-  }
+    difficulty_level: "beginner" | "intermediate" | "advanced";
+    is_public: boolean;
+    saved: boolean;
+}
 
 export interface CreateSnippetData {
-  title: string;
-  language: string;
-  summary: string;
-  snippet: string;
-  tags: string | string[];
-  difficultyLevel: "beginner" | "intermediate" | "advanced";
+    title: string;
+    language: string;
+    summary: string;
+    snippet: string;
+    tags: string | string[];
+    difficulty_level: "beginner" | "intermediate" | "advanced";
+    is_public: boolean;
 }
 
 export interface CodeExecutionResult {
@@ -86,7 +89,7 @@ export const filterSnippets = async (
   return snippets.filter(snippet => {
     const matchesLanguage = !language || snippet.language === language;
     const matchesTag = !tag || snippet.tags.includes(tag);
-    const matchesDifficulty = !difficulty || snippet.difficultyLevel === difficulty;
+    const matchesDifficulty = !difficulty || snippet.difficulty_level === difficulty;
     
     return matchesLanguage && matchesTag && matchesDifficulty;
   });
@@ -116,15 +119,13 @@ export const createSnippet = async (data: CreateSnippetData): Promise<CodeSnippe
   }
 };
 
-export const executeCode = async (
-  exerciseId: string,
-  code: string
-): Promise<CodeExecutionResult> => {
+
+export const updateSnippet = async (id: string, data: Partial<CreateSnippetData>): Promise<CodeSnippet> => {
   try {
     const token = localStorage.getItem('token');
-    const response = await axios.post(
-      `${API_URL}/snippet/exercises/${exerciseId}/execute/`,
-      { code },
+    const response = await axios.patch<CodeSnippet>(
+      `${API_URL}/snippet/snippet-details/${id}/`,
+      data,
       {
         headers: {
           Authorization: `JWT ${token}`,
@@ -134,8 +135,56 @@ export const executeCode = async (
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.detail || 'Code execution failed');
+      console.error("API Error:", error.response?.data || error.message);
+      throw new Error(error.response?.data?.detail || 'Failed to update snippet');
+    } else {
+      console.error("Error updating snippet:", error);
+      throw new Error('Failed to update snippet');
     }
-    throw new Error('Code execution failed');
+  }
+};
+
+
+
+
+export const getSavedSnippets = async (): Promise<CodeSnippet[]> => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.get<CodeSnippet[]>(
+      `${API_URL}/snippet/snippet-saved-list/`,  // Update the URL to match backend
+      {
+        headers: {
+          Authorization: `JWT ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching saved snippets:", error);
+    return [];
+  }
+};
+
+export const toggleSaveSnippet = async (id: string, saved: boolean): Promise<CodeSnippet> => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.patch<CodeSnippet>(
+      `${API_URL}/snippet/snippet-details/${id}/`,
+      { saved },
+      {
+        headers: {
+          Authorization: `JWT ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("API Error:", error.response?.data || error.message);
+      throw new Error(error.response?.data?.detail || 'Failed to update saved status');
+    } else {
+      console.error("Error updating saved status:", error);
+      throw new Error('Failed to update saved status');
+    }
   }
 };

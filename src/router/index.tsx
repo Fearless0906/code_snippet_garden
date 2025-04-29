@@ -13,6 +13,9 @@ import { RootState } from "../auth/store/store";
 import AboutPage from "../pages/About";
 import TopicsPage from "../pages/Topics";
 import LanguagesPage from "../pages/Languages";
+import Home from "../pages/Home";
+import SnippetGenerator from "../components/SnippetGenerator";
+import MarksPage from "../pages/Marks";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
@@ -28,6 +31,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <Home />,
+  },
+  {
+    path: "/login",
     element: <Login />,
   },
   {
@@ -68,6 +75,14 @@ const router = createBrowserRouter([
       {
         path: "/about",
         element: <AboutPage />,
+      },
+      {
+        path: "/snippet-generator",
+        element: <SnippetGenerator />,
+      },
+      {
+        path: "/marks",
+        element: <MarksPage />,
       },
       {
         path: "/dashboard/code-snippet/:id",

@@ -1,4 +1,4 @@
-// import React, { useState, useMemo } from "react";
+import { languageIcons } from "../data/languageIcons";
 import {
   Sidebar,
   SidebarContent,
@@ -11,6 +11,7 @@ import {
 } from "../components/ui/sidebar";
 import { Code, Layers } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { Button } from "./ui/button";
 
 interface SidebarNavigationProps {
   languages: string[];
@@ -43,10 +44,15 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   };
 
   return (
-    <Sidebar data-sidebar="sidebar" className="h-full pt-14 lg:pt-20 w-64">
-      <SidebarContent className="flex flex-col">
+    <Sidebar
+      data-sidebar="sidebar"
+      className="h-full lg:pt-12 w-72 border-r bg-background/60 backdrop-blur-sm"
+    >
+      <SidebarContent className="flex flex-col px-4">
         <SidebarGroup>
-          <SidebarGroupLabel>Languages</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-xs uppercase tracking-wider text-muted-foreground/70 font-medium px-2">
+            Languages
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {languages.map((language) => (
@@ -56,10 +62,13 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
                     data-active={activeLanguage === language}
                     asChild
                   >
-                    <button className="flex items-center gap-2 w-full">
-                      <Code className="size-4" />
-                      <span>{language}</span>
-                    </button>
+                    <Button
+                      className="flex items-center gap-3 w-full justify-start rounded-lg hover:bg-accent/50 data-[active=true]:bg-accent data-[active=true]:text-accent-foreground transition-all duration-200"
+                      variant="ghost"
+                    >
+                      {languageIcons[language] || <Code className="size-4" />}
+                      <span className="font-medium">{language}</span>
+                    </Button>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -75,17 +84,23 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
                   data-active={!activeLanguage && !activeTopic}
                   asChild
                 >
-                  <button className="flex items-center gap-2 w-full font-semibold">
-                    All Languages
-                  </button>
+                  <Button
+                    className="flex items-center gap-3 w-full justify-start rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50 data-[active=true]:bg-accent data-[active=true]:text-accent-foreground"
+                    variant="ghost"
+                  >
+                    <Code className="size-4" />
+                    <span className="font-medium">All Languages</span>
+                  </Button>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup className="mt-4">
-          <SidebarGroupLabel>Topics</SidebarGroupLabel>
+        <SidebarGroup className="mt-8">
+          <SidebarGroupLabel className="text-xs uppercase tracking-wider text-muted-foreground/70 font-medium px-2">
+            Topics
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {topics.map((topic) => (
@@ -95,10 +110,13 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
                     data-active={activeTopic === topic}
                     asChild
                   >
-                    <button className="flex items-center gap-2 w-full">
+                    <Button
+                      className="flex items-center gap-3 w-full justify-start rounded-lg hover:bg-accent/50 data-[active=true]:bg-accent data-[active=true]:text-accent-foreground transition-all duration-200"
+                      variant="ghost"
+                    >
                       <Layers className="size-4" />
-                      <span>{topic}</span>
-                    </button>
+                      <span className="font-medium">{topic}</span>
+                    </Button>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -111,9 +129,13 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
                   data-active={!activeTopic && !activeLanguage}
                   asChild
                 >
-                  <button className="flex items-center gap-2 w-full font-semibold">
-                    All Topics
-                  </button>
+                  <Button
+                    className="flex items-center gap-3 w-full justify-start rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50 data-[active=true]:bg-accent data-[active=true]:text-accent-foreground"
+                    variant="ghost"
+                  >
+                    <Layers className="size-4" />
+                    <span className="font-medium">All Topics</span>
+                  </Button>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

@@ -6,9 +6,13 @@ import { useDebounce } from "../hooks/use-debounce";
 
 interface SnippetListProps {
   snippets: CodeSnippet[];
+  onSnippetUpdate?: (updatedSnippet: CodeSnippet) => void;
 }
 
-const SnippetList: React.FC<SnippetListProps> = ({ snippets }) => {
+const SnippetList: React.FC<SnippetListProps> = ({
+  snippets,
+  onSnippetUpdate,
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -23,6 +27,10 @@ const SnippetList: React.FC<SnippetListProps> = ({ snippets }) => {
     );
   });
 
+  const handleSnippetUpdate = (updatedSnippet: CodeSnippet) => {
+    onSnippetUpdate?.(updatedSnippet);
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <Input
@@ -34,7 +42,11 @@ const SnippetList: React.FC<SnippetListProps> = ({ snippets }) => {
       />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredSnippets.map((snippet) => (
-          <SnippetCard key={snippet.id} snippet={snippet} />
+          <SnippetCard
+            key={snippet.id}
+            snippet={snippet}
+            onUpdate={handleSnippetUpdate}
+          />
         ))}
         {filteredSnippets.length === 0 && (
           <p className="col-span-full text-center text-muted-foreground">

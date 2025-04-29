@@ -1,8 +1,17 @@
 import { LoaderCircle } from "lucide-react";
+import React from "react";
 
-const SpinnerLoader = () => {
+interface SpinnerLoaderProps {
+  className?: string;
+}
+
+const SpinnerLoader: React.FC<SpinnerLoaderProps> = ({ className }) => {
   return (
-    <LoaderCircle className="h-5 w-5 animate-spin text-muted-foreground" />
+    <LoaderCircle
+      className={`h-5 w-5 animate-spin text-muted-foreground ${
+        className || ""
+      }`}
+    />
   );
 };
 

@@ -11,6 +11,7 @@ import { SidebarNavigation } from "../components/SidebarNavigation";
 import { SidebarProvider } from "../components/ui/sidebar";
 import SpinnerLoader from "../components/Loader/SpinnerLoader";
 import AddSnippetDialog from "../components/AddSnippetDialog";
+import SnippetForm from "../components/Ai_Snippets";
 
 const Index: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -43,6 +44,14 @@ const Index: React.FC = () => {
     fetchData();
   }, []);
 
+  const handleSnippetUpdate = (updatedSnippet: CodeSnippet) => {
+    setSnippets((currentSnippets) =>
+      currentSnippets.map((snippet) =>
+        snippet.id === updatedSnippet.id ? updatedSnippet : snippet
+      )
+    );
+  };
+
   const filteredSnippets = useMemo(() => {
     return snippets.filter((snippet) => {
       if (languageFilter && snippet.language !== languageFilter) return false;
@@ -64,14 +73,19 @@ const Index: React.FC = () => {
       <SidebarProvider className="pt-2">
         <div className="flex min-h-screen w-full">
           <SidebarNavigation languages={languages} topics={topics} />
-          <main className="flex-1 p-6 md:p-10 lg:p-12 bg-background">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold mb-6 cursor-pointer">
-                Code Snippets
-              </h1>
-              <AddSnippetDialog onSnippetCreated={fetchData} />
+          <main className="flex-1 p-6 md:p-10 lg:p-12 bg-background max-w-7xl mx-auto">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between w-full">
+                <h1 className="text-3xl font-bold cursor-pointer">
+                  Code Snippets
+                </h1>
+                <AddSnippetDialog onSnippetCreated={fetchData} />
+              </div>
+              <SnippetList
+                snippets={filteredSnippets}
+                onSnippetUpdate={handleSnippetUpdate}
+              />
             </div>
-            <SnippetList snippets={filteredSnippets} />
           </main>
         </div>
       </SidebarProvider>
