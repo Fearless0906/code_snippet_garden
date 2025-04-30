@@ -16,6 +16,8 @@ import {
   incrementSavedCount,
   decrementSavedCount,
 } from "../auth/store/slices/savedSnippetsSlice";
+import CommentSection from "../components/Snippet/CommentSection";
+import { Separator } from "../components/ui/separator";
 
 const SnippetDetailPage = () => {
   const dispatch = useDispatch();
@@ -46,6 +48,10 @@ const SnippetDetailPage = () => {
 
     fetchSnippet();
   }, [id, navigate]);
+
+  if (!snippet) {
+    return null; // The useSnippet hook will redirect to /not-found if needed
+  }
 
   const getDocsUrl = (language: string) => {
     const docsUrls: { [key: string]: string } = {
@@ -197,6 +203,10 @@ const SnippetDetailPage = () => {
                     <Link to={`/practice/${snippet.id}`}>Start practicing</Link>
                   </Button>
                 </div>
+              </div>
+              <Separator className="my-8" />
+              <div>
+                <CommentSection snippetId={snippet.id} title={snippet.title} />
               </div>
             </div>
           </div>
