@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CodeSnippet, SavedSnippet, Comment
+from .models import CodeSnippet, SavedSnippet, Comment, ErrorSolution, UserSolution, SaveSolution
 
 class CodeSnippetSerializer(serializers.ModelSerializer):
     class Meta:
@@ -54,3 +54,50 @@ class CommentSerializer(serializers.ModelSerializer):
         if obj.is_reply:
             return []
         return CommentSerializer(obj.replies.all(), many=True, context=self.context).data
+
+class ErrorSolutionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ErrorSolution
+        fields = [
+            'id',
+            'title',
+            'code',
+            'solution',
+            'explanation',
+            'tags',
+            'difficulty',
+            'votes',
+            'created_at',
+            'updated_at',
+        ]
+        read_only_fields = ['votes', 'created_at', 'updated_at']
+
+class UserSolutionSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = UserSolution
+        fields = ['id', 'error', 'user', 'code', 'success', 'output', 'error_message', 'submitted_at', 'updated_at']
+        read_only_fields = ['user', 'submitted_at', 'updated_at']
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
+
+class SaveSolutionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SaveSolution
+        fields = [
+            'id',
+            'error_solution',
+            'solution',
+            'is_correct',
+            'runtime',
+            'memory_usage',
+            'output',
+            'user',
+            'submitted_at',
+            'updated_at'
+        ]
+        read_only_fields = ['user', 'submitted_at', 'updated_at']

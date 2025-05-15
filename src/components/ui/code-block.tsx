@@ -1,18 +1,17 @@
 "use client";
 import React from "react";
+import { cn } from "../../lib/utils";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { atomDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { IconCheck, IconCopy } from "@tabler/icons-react";
 
 type CodeBlockProps = {
   language: string;
-  filename: string;
+  filename?: string;
+  className?: string;
   highlightLines?: number[];
 } & (
-  | {
-      code: string;
-      tabs?: never;
-    }
+  | { code: string; tabs?: never }
   | {
       code?: never;
       tabs: Array<{
@@ -24,10 +23,47 @@ type CodeBlockProps = {
     }
 );
 
+const customStyle = {
+  ...oneDark,
+  'code[class*="language-"]': {
+    ...oneDark['code[class*="language-"]'],
+    fontSize: "0.875rem",
+  },
+  'pre[class*="language-"]': {
+    ...oneDark['pre[class*="language-"]'],
+    margin: 0,
+    padding: "1.5rem",
+    backgroundColor: "transparent",
+  },
+  "attr-name": {
+    color: "#7dd3fc", // sky-300
+  },
+  "attr-value": {
+    color: "#86efac", // green-300
+  },
+  function: {
+    color: "#c4b5fd", // violet-300
+  },
+  string: {
+    color: "#fca5a5", // red-300
+  },
+  number: {
+    color: "#fdba74", // orange-300
+  },
+  keyword: {
+    color: "#f9a8d4", // pink-300
+  },
+  comment: {
+    color: "#6b7280", // gray-500
+    fontStyle: "italic",
+  },
+};
+
 export const CodeBlock = ({
   language,
   filename,
   code,
+  className,
   highlightLines = [],
   tabs = [],
 }: CodeBlockProps) => {
@@ -54,7 +90,12 @@ export const CodeBlock = ({
     : highlightLines;
 
   return (
-    <div className="relative w-full rounded-lg bg-slate-900 p-4 font-mono text-sm">
+    <div
+      className={cn(
+        "relative w-full rounded-lg bg-slate-900/95 font-mono text-sm",
+        className
+      )}
+    >
       <div className="flex flex-col gap-2">
         {tabsExist && (
           <div className="flex  overflow-x-auto">
@@ -87,27 +128,32 @@ export const CodeBlock = ({
       </div>
       <SyntaxHighlighter
         language={activeLanguage}
-        style={atomDark}
-        customStyle={{
-          margin: 0,
-          padding: 0,
-          background: "transparent",
-          fontSize: "0.875rem", // text-sm equivalent
+        style={customStyle}
+        showLineNumbers
+        wrapLines
+        lineNumberStyle={{
+          minWidth: "2.5em",
+          paddingRight: "1em",
+          color: "#6b7280",
+          textAlign: "right",
         }}
-        wrapLines={true}
-        showLineNumbers={true}
         lineProps={(lineNumber) => ({
           style: {
             backgroundColor: activeHighlightLines.includes(lineNumber)
-              ? "rgba(255,255,255,0.1)"
+              ? "rgba(99, 102, 241, 0.1)"
               : "transparent",
             display: "block",
             width: "100%",
           },
         })}
-        PreTag="div"
+        customStyle={{
+          margin: 0,
+          padding: 0,
+          background: "transparent",
+        }}
+        className="scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent"
       >
-        {String(activeCode)}
+        {String(activeCode).trim()}
       </SyntaxHighlighter>
     </div>
   );

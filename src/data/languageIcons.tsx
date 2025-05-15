@@ -1,26 +1,57 @@
-import { ReactElement } from "react";
-import { FaReact } from "react-icons/fa";
+import { Code } from "lucide-react";
 import {
-  SiJavascript,
+  DiJavascript1,
+  DiPython,
+  DiJava,
+  DiHtml5,
+  DiCss3,
+  DiPhp,
+  DiRuby,
+  DiReact,
+  DiAngularSimple,
+  DiMongodb,
+  DiGo,
+  DiMysql,
+  DiFsharp,
+} from "react-icons/di";
+import {
   SiTypescript,
-  SiHtml5,
-  SiCss3,
-  SiEjs,
-  SiPhp,
-  SiPython,
-  SiJson,
-  SiMarkdown,
+  SiCplusplus,
+  SiRust,
+  SiSwift,
+  SiKotlin,
+  SiDart,
 } from "react-icons/si";
+import React from "react";
 
-export const languageIcons: Record<string, ReactElement> = {
-  React: <FaReact className="size-4" />,
-  JavaScript: <SiJavascript className="size-4" />,
-  TypeScript: <SiTypescript className="size-4" />,
-  HTML: <SiHtml5 className="size-4" />,
-  CSS: <SiCss3 className="size-4" />,
-  Vue: <SiEjs className="size-4" />,
-  PHP: <SiPhp className="size-4" />,
-  Python: <SiPython className="size-4" />,
-  JSON: <SiJson className="size-4" />,
-  Markdown: <SiMarkdown className="size-4" />,
+const wrapIcon = (Icon: React.ElementType) => {
+  return (props: React.SVGProps<SVGSVGElement>) => (
+    <Icon className={`h-4 w-4 ${props.className || ""}`} {...props} />
+  );
+};
+
+export const getLanguageIcon = (language: string): React.ElementType => {
+  const icons: Record<string, React.ElementType> = {
+    JavaScript: wrapIcon(DiJavascript1),
+    TypeScript: wrapIcon(SiTypescript),
+    Python: wrapIcon(DiPython),
+    Java: wrapIcon(DiJava),
+    HTML: wrapIcon(DiHtml5),
+    CSS: wrapIcon(DiCss3),
+    PHP: wrapIcon(DiPhp),
+    Ruby: wrapIcon(DiRuby),
+    "C++": wrapIcon(SiCplusplus),
+    "C#": wrapIcon(DiFsharp),
+    Go: wrapIcon(DiGo),
+    Rust: wrapIcon(SiRust),
+    Swift: wrapIcon(SiSwift),
+    Kotlin: wrapIcon(SiKotlin),
+    Dart: wrapIcon(SiDart),
+    React: wrapIcon(DiReact),
+    Angular: wrapIcon(DiAngularSimple),
+    MongoDB: wrapIcon(DiMongodb),
+    MySQL: wrapIcon(DiMysql),
+  };
+
+  return icons[language] || wrapIcon(Code);
 };

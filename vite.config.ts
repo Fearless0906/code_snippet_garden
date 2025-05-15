@@ -11,4 +11,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    assetsInlineLimit: 4096, // Inline small assets
+    chunkSizeWarningLimit: 1000,
+  }
 })

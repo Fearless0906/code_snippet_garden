@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Bookmark, Code, Tags, BookmarkX } from "lucide-react";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
-import { languageIcons } from "../data/languageIcons";
 import {
   CodeSnippet,
   toggleSaveSnippet,
@@ -14,6 +13,7 @@ import { cn } from "../lib/utils";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { decrementSavedCount } from "../auth/store/slices/savedSnippetsSlice";
+import { getLanguageIcon } from "../data/languageIcons";
 
 export default function MarksPage() {
   const dispatch = useDispatch();
@@ -104,9 +104,14 @@ export default function MarksPage() {
                 <div className="space-y-4 flex-1">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-primary/10 rounded-lg">
-                      {languageIcons[snippet.language] || (
-                        <Code className="size-5" />
-                      )}
+                      {(() => {
+                        const Icon = getLanguageIcon(snippet.language);
+                        return Icon ? (
+                          <Icon className="size-5" />
+                        ) : (
+                          <Code className="size-5" />
+                        );
+                      })()}
                     </div>
                     <div className="space-x-2">
                       <Badge variant="outline" className="text-xs font-medium">

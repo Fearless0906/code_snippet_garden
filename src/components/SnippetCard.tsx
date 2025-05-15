@@ -15,12 +15,47 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { cn } from "../lib/utils";
 
 interface SnippetCardProps {
   snippet: CodeSnippet;
   onUpdate?: (updatedSnippet: CodeSnippet) => void;
   saved?: boolean;
 }
+
+const getLanguageColor = (language: string) => {
+  switch (language.toLowerCase()) {
+    case "javascript":
+      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
+    case "typescript":
+      return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+    case "python":
+      return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+    case "java":
+      return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+    case "c#":
+      return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400";
+    case "c++":
+      return "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400";
+    case "php":
+      return "bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400";
+    default:
+      return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400";
+  }
+};
+
+const getDifficultyColor = (difficulty: string) => {
+  switch (difficulty.toLowerCase()) {
+    case "beginner":
+      return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+    case "intermediate":
+      return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+    case "advanced":
+      return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+    default:
+      return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400";
+  }
+};
 
 const SnippetCard = ({ snippet, onUpdate, saved }: SnippetCardProps) => {
   const navigate = useNavigate();
@@ -129,19 +164,33 @@ const SnippetCard = ({ snippet, onUpdate, saved }: SnippetCardProps) => {
             />
           ) : (
             <Badge
-              variant="outline"
-              className="uppercase tracking-wide text-xs"
+              variant="secondary"
+              className={cn(
+                "uppercase tracking-wide text-xs",
+                getLanguageColor(snippet.language)
+              )}
             >
               {snippet.language}
             </Badge>
           )}
           <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="text-xs">
+            <Badge
+              variant="secondary"
+              className={cn(
+                "text-xs",
+                getDifficultyColor(snippet.difficulty_level)
+              )}
+            >
               {snippet.difficulty_level}
             </Badge>
             <Badge
               variant={snippet.is_public ? "outline" : "secondary"}
-              className="text-xs"
+              className={cn(
+                "text-xs",
+                snippet.is_public
+                  ? ""
+                  : "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400"
+              )}
             >
               {snippet.is_public ? "Public" : "Private"}
             </Badge>

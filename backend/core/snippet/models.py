@@ -46,7 +46,7 @@ class Comment(models.Model):
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=200, blank=True, null=True)
-    # discussion_id = models.CharField(max_length=200, blank=True, null=True)
+    discussion_id = models.CharField(max_length=200, blank=True, null=True)
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
     likes = models.ManyToManyField(User, related_name='liked_comments', blank=True)
     
@@ -63,4 +63,67 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comment by {self.user.username} on {self.snippet.title}'
+
+class ErrorSolution(models.Model):
+    DIFFICULTY_CHOICES = [
+        ('easy', 'Easy'),
+        ('medium', 'Medium'),
+        ('hard', 'Hard'),
+    ]
+    title = models.CharField(max_length=200)
+    code = models.TextField()
+    solution = models.TextField()
+    explanation = models.TextField()
+    tags = models.JSONField(default=list)
+    difficulty = models.CharField(
+        max_length=6,
+        choices=DIFFICULTY_CHOICES,
+        default='medium'
+    )
+    votes = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-votes', '-created_at']
+
+    def __str__(self):
+        return self.title
+    
+class UserSolution(models.Model):
+    error = models.ForeignKey(ErrorSolution, on_delete=models.CASCADE, related_name="user_solutions")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_solutions")  # Add user reference
+    code = models.TextField()
+    success = models.BooleanField(default=False)  # Add success field
+    output = models.TextField(blank=True)  # Add output field
+    error_message = models.TextField(null=True, blank=True)  # Add error field
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)  # Add updated timestamp
+
+    class Meta:
+        ordering = ['-submitted_at']
+        verbose_name = "User Solution"
+        verbose_name_plural = "User Solutions"
+
+    def __str__(self):
+        return f"Solution for {self.error.title} by {self.user.username}"
+
+class SaveSolution(models.Model):
+    error_solution = models.ForeignKey(ErrorSolution, on_delete=models.CASCADE, related_name="saved_solutions")
+    solution = models.TextField()
+    is_correct = models.BooleanField(default=False)
+    runtime = models.FloatField(default=0)  # in milliseconds
+    memory_usage = models.IntegerField(default=0)  # in bytes
+    output = models.TextField(blank=True)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="saved_solutions")
+
+    class Meta:
+        ordering = ['-submitted_at']
+        verbose_name = "Saved Solution"
+        verbose_name_plural = "Saved Solutions"
+
+    def __str__(self):
+        return f"Solution for {self.error_solution.title} by {self.user.username}"
 

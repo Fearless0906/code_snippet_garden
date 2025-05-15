@@ -7,11 +7,10 @@ import {
   getTags,
 } from "../data/snippet";
 import SnippetList from "../components/SnippetList";
-import { SidebarNavigation } from "../components/SidebarNavigation";
-import { SidebarProvider } from "../components/ui/sidebar";
 import SpinnerLoader from "../components/Loader/SpinnerLoader";
-import AddSnippetDialog from "../components/AddSnippetDialog";
-import SnippetForm from "../components/Ai_Snippets";
+import { useDebounce } from "../hooks/use-debounce";
+import { useSelector } from "react-redux";
+import { RootState } from "../auth/store/store";
 
 const Index: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -52,13 +51,29 @@ const Index: React.FC = () => {
     );
   };
 
+  const searchTerm = useSelector((state: RootState) => state.layout.searchTerm);
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
   const filteredSnippets = useMemo(() => {
     return snippets.filter((snippet) => {
-      if (languageFilter && snippet.language !== languageFilter) return false;
-      if (topicFilter && !snippet.tags.includes(topicFilter)) return false;
+      const matchesFilter =
+        (languageFilter && snippet.language !== languageFilter) ||
+        (topicFilter && !snippet.tags.includes(topicFilter));
+      if (matchesFilter) return false;
+
+      if (debouncedSearchTerm) {
+        const search = debouncedSearchTerm.toLowerCase();
+        return (
+          snippet.title.toLowerCase().includes(search) ||
+          snippet.summary.toLowerCase().includes(search) ||
+          snippet.language.toLowerCase().includes(search) ||
+          snippet.tags.some((tag) => tag.toLowerCase().includes(search))
+        );
+      }
+
       return true;
     });
-  }, [snippets, languageFilter, topicFilter]);
+  }, [snippets, languageFilter, topicFilter, debouncedSearchTerm]);
 
   if (loading) {
     return (
@@ -69,26 +84,17 @@ const Index: React.FC = () => {
   }
 
   return (
-    <div>
-      <SidebarProvider className="pt-2">
-        <div className="flex min-h-screen w-full">
-          <SidebarNavigation languages={languages} topics={topics} />
-          <main className="flex-1 p-6 md:p-10 lg:p-12 bg-background max-w-7xl mx-auto">
-            <div className="space-y-6">
-              <div className="flex items-center justify-between w-full">
-                <h1 className="text-3xl font-bold cursor-pointer">
-                  Code Snippets
-                </h1>
-                <AddSnippetDialog onSnippetCreated={fetchData} />
-              </div>
-              <SnippetList
-                snippets={filteredSnippets}
-                onSnippetUpdate={handleSnippetUpdate}
-              />
-            </div>
-          </main>
+    <div className="p-6">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold">Code Snippets</h1>
         </div>
-      </SidebarProvider>
+
+        <SnippetList
+          snippets={filteredSnippets}
+          onSnippetUpdate={handleSnippetUpdate}
+        />
+      </div>
     </div>
   );
 };

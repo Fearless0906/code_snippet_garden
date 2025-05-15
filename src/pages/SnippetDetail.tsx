@@ -153,11 +153,14 @@ const SnippetDetailPage = () => {
 
             <div>
               <h2 className="text-xl font-medium mb-4">Code Example</h2>
-              <CodeBlock
-                code={snippet.snippet}
-                language={snippet.language}
-                className="mb-6"
-              />
+              <div className="rounded-lg overflow-hidden shadow-lg">
+                <CodeBlock
+                  code={snippet.snippet}
+                  language={snippet.language.toLowerCase()}
+                  filename={`example.${snippet.language.toLowerCase()}`}
+                  className="rounded-none"
+                />
+              </div>
             </div>
 
             <div>
@@ -200,7 +203,7 @@ const SnippetDetailPage = () => {
                     Reinforce your understanding with practical exercises.
                   </p>
                   <Button variant="link" className="p-0 h-auto" asChild>
-                    <Link to={`/practice/${snippet.id}`}>Start practicing</Link>
+                    <Link to={`/dashboard/exercises`}>Start practicing</Link>
                   </Button>
                 </div>
               </div>
@@ -213,8 +216,8 @@ const SnippetDetailPage = () => {
         </div>
       </main>
 
-      <footer className="border-t py-6 md:py-0">
-        <div className="container flex flex-col md:flex-row gap-4 md:h-16 items-center justify-between">
+      <footer className="border-t py-6 md:py-0 flex justify-center items-center w-full">
+        <div className="container flex flex-col md:flex-row gap-4 md:h-16 items-center justify-between max-w-7xl mx-auto px-4">
           <p className="text-sm text-muted-foreground">
             © 2025 Code Whisper Garden. All rights reserved.
           </p>

@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { Check, Copy } from "lucide-react";
-import { cn } from "../lib/utils"; // Make sure this is the correct path
+import { cn } from "../lib/utils";
 import { toast } from "sonner";
-import { Button } from "../components/ui/button";
-import { CodeBlock } from "../components/ui/code-block";
+import { Button } from "./ui/button";
+import { CodeBlock } from "./ui/code-block";
 
 interface CodeBlocksProps {
   code: string;
   language: string;
   className?: string;
+  filename?: string;
 }
 
 const CodeBlocks = ({ code, language, className }: CodeBlocksProps) => {
@@ -17,31 +18,60 @@ const CodeBlocks = ({ code, language, className }: CodeBlocksProps) => {
   const handleCopy = () => {
     navigator.clipboard.writeText(code);
     setCopied(true);
-    toast.success("Copied to clipboard", {
-      description: "The code has been copied successfully.",
-    });
+    toast.success("Copied to clipboard");
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Generate proper filename based on language
+  const getFileName = (lang: string) => {
+    const extensions: Record<string, string> = {
+      javascript: "js",
+      typescript: "ts",
+      python: "py",
+      java: "java",
+      ruby: "rb",
+      php: "php",
+      "c++": "cpp",
+      "c#": "cs",
+      go: "go",
+      rust: "rs",
+      swift: "swift",
+      kotlin: "kt",
+    };
+    const ext = extensions[lang.toLowerCase()] || lang.toLowerCase();
+    return `example.${ext}`;
   };
 
   return (
     <div
-      className={cn("border rounded-lg overflow-hidden bg-muted/10", className)}
+      className={cn(
+        "relative rounded-lg overflow-hidden bg-muted/10",
+        className
+      )}
     >
-      <div className="flex items-center justify-between px-4 py-2 bg-muted">
+      <div className="flex items-center justify-between px-4 py-2 bg-muted/50">
         <span className="text-sm font-medium text-muted-foreground">
-          {language}
+          {getFileName(language)}
         </span>
         <Button
           size="icon"
           variant="ghost"
           onClick={handleCopy}
-          aria-label="Copy code"
-          className="text-muted-foreground hover:text-foreground"
+          className="h-8 w-8 text-muted-foreground hover:text-foreground"
         >
-          {copied ? <Check size={16} /> : <Copy size={16} />}
+          {copied ? (
+            <Check className="h-4 w-4" />
+          ) : (
+            <Copy className="h-4 w-4" />
+          )}
         </Button>
       </div>
-      <CodeBlock language={language} code={code} className="rounded-none" />
+      <CodeBlock
+        code={code}
+        language={language.toLowerCase()}
+        // filename={getFileName(language)}
+        className="rounded-t-none border-t"
+      />
     </div>
   );
 };

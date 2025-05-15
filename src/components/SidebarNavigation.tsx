@@ -1,147 +1,162 @@
-import { languageIcons } from "../data/languageIcons";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-} from "../components/ui/sidebar";
-import { Code, Layers } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Code, Home, Menu, Moon, Sun, Globe, Tags, Cpu } from "lucide-react";
 import { Button } from "./ui/button";
+import { cn } from "../lib/utils";
+import { useNavigate, useLocation } from "react-router-dom";
+import { getLanguageIcon } from "../data/languageIcons";
+
+type SidebarItemProps = {
+  icon: React.ElementType;
+  label: string;
+  active?: boolean;
+  onClick?: () => void;
+};
+
+const SidebarItem = ({
+  icon: Icon,
+  label,
+  active,
+  onClick,
+}: SidebarItemProps) => {
+  return (
+    <Button
+      variant="ghost"
+      className={cn(
+        "w-full justify-start gap-3 px-3 py-2 text-sm font-medium",
+        active
+          ? "bg-primary/10 text-primary"
+          : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
+      )}
+      onClick={onClick}
+    >
+      <Icon className="h-4 w-4" />
+      <span>{label}</span>
+    </Button>
+  );
+};
 
 interface SidebarNavigationProps {
   languages: string[];
-  topics: string[];
+  isOpen: boolean;
+  onToggle: () => void;
+  isDark: boolean;
+  toggleTheme: () => void;
 }
+
+const navItems = [
+  { label: "Errors", href: "/dashboard/code-error", icon: Code },
+  { label: "Exercises", href: "/dashboard/exercises", icon: Code }, // Update this line
+  { label: "Quiz", href: "/dashboard/quiz", icon: Code },
+  { label: "Code with AI", href: "/snippet-generator", icon: Cpu },
+  { label: "Languages", href: "/languages", icon: Globe },
+  { label: "Topics", href: "/topics", icon: Tags },
+  { label: "About", href: "/about", icon: Code },
+];
+
+const LanguageIcon = ({ language }: { language: string }) => {
+  const Icon = getLanguageIcon(language);
+  return (
+    <div className="flex h-4 w-4 items-center justify-center">
+      {Icon && <Icon className="h-4 w-4" />}
+    </div>
+  );
+};
 
 export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   languages,
-  topics,
+  isOpen,
+  onToggle,
+  isDark,
+  toggleTheme,
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Parse query params for filtering
-  const queryParams = new URLSearchParams(location.search);
-  const activeLanguage = queryParams.get("language") || null;
-  const activeTopic = queryParams.get("topic") || null;
-
-  // Navigation handlers
-  const handleLanguageClick = (lang: string) => {
-    queryParams.set("language", lang);
-    queryParams.delete("topic");
-    navigate({ pathname: "/dashboard", search: queryParams.toString() });
-  };
-
-  const handleTopicClick = (topic: string) => {
-    queryParams.set("topic", topic);
-    queryParams.delete("language");
-    navigate({ pathname: "/dashboard", search: queryParams.toString() });
-  };
+  const isMobile = window.innerWidth <= 768;
 
   return (
-    <Sidebar
-      data-sidebar="sidebar"
-      className="h-full lg:pt-12 w-72 border-r bg-background/60 backdrop-blur-sm"
+    <div
+      className={cn(
+        "fixed left-0 top-0 z-50 flex h-screen flex-col border-r bg-card transition-all duration-300",
+        isOpen ? "w-64" : "w-16",
+        isMobile && !isOpen && "hidden"
+      )}
     >
-      <SidebarContent className="flex flex-col px-4">
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-xs uppercase tracking-wider text-muted-foreground/70 font-medium px-2">
-            Languages
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {languages.map((language) => (
-                <SidebarMenuItem key={language}>
-                  <SidebarMenuButton
-                    onClick={() => handleLanguageClick(language)}
-                    data-active={activeLanguage === language}
-                    asChild
-                  >
-                    <Button
-                      className="flex items-center gap-3 w-full justify-start rounded-lg hover:bg-accent/50 data-[active=true]:bg-accent data-[active=true]:text-accent-foreground transition-all duration-200"
-                      variant="ghost"
-                    >
-                      {languageIcons[language] || <Code className="size-4" />}
-                      <span className="font-medium">{language}</span>
-                    </Button>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => {
-                    queryParams.delete("language");
-                    navigate({
-                      pathname: "/dashboard",
-                      search: queryParams.toString(),
-                    });
-                  }}
-                  data-active={!activeLanguage && !activeTopic}
-                  asChild
-                >
-                  <Button
-                    className="flex items-center gap-3 w-full justify-start rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50 data-[active=true]:bg-accent data-[active=true]:text-accent-foreground"
-                    variant="ghost"
-                  >
-                    <Code className="size-4" />
-                    <span className="font-medium">All Languages</span>
-                  </Button>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+      <div className="flex h-14 items-center justify-between border-b px-4">
+        {isOpen && <h2 className="font-semibold">Code Snippet</h2>}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onToggle}
+          className="ml-auto"
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
+      </div>
 
-        <SidebarGroup className="mt-8">
-          <SidebarGroupLabel className="text-xs uppercase tracking-wider text-muted-foreground/70 font-medium px-2">
-            Topics
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {topics.map((topic) => (
-                <SidebarMenuItem key={topic}>
-                  <SidebarMenuButton
-                    onClick={() => handleTopicClick(topic)}
-                    data-active={activeTopic === topic}
-                    asChild
-                  >
-                    <Button
-                      className="flex items-center gap-3 w-full justify-start rounded-lg hover:bg-accent/50 data-[active=true]:bg-accent data-[active=true]:text-accent-foreground transition-all duration-200"
-                      variant="ghost"
-                    >
-                      <Layers className="size-4" />
-                      <span className="font-medium">{topic}</span>
-                    </Button>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => {
-                    queryParams.delete("topic");
-                    navigate({ pathname: "/", search: queryParams.toString() });
-                  }}
-                  data-active={!activeTopic && !activeLanguage}
-                  asChild
-                >
-                  <Button
-                    className="flex items-center gap-3 w-full justify-start rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50 data-[active=true]:bg-accent data-[active=true]:text-accent-foreground"
-                    variant="ghost"
-                  >
-                    <Layers className="size-4" />
-                    <span className="font-medium">All Topics</span>
-                  </Button>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+      <div className="flex-1 overflow-y-auto p-2">
+        {/* Dashboard Section */}
+        <div className="mb-4">
+          {isOpen && (
+            <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Dashboard
+            </p>
+          )}
+          <SidebarItem
+            icon={Home}
+            label={isOpen ? "Home" : ""}
+            active={location.pathname === "/dashboard"}
+            onClick={() => navigate("/dashboard")}
+          />
+
+          {/* Add Navigation Items */}
+          {isOpen &&
+            navItems.map((item) => (
+              <SidebarItem
+                key={item.href}
+                icon={item.icon}
+                label={item.label}
+                active={location.pathname === item.href}
+                onClick={() => navigate(item.href)}
+              />
+            ))}
+        </div>
+
+        {/* Languages Section */}
+        <div className="mb-4">
+          {isOpen && (
+            <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Languages
+            </p>
+          )}
+          {languages.map((language) => (
+            <Button
+              key={language}
+              variant="ghost"
+              className={cn(
+                "w-full justify-start gap-3 px-3 py-2 text-sm font-medium",
+                location.search.includes(`language=${language}`)
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
+              )}
+              onClick={() => navigate(`/dashboard?language=${language}`)}
+            >
+              <LanguageIcon language={language} />
+              {isOpen && <span>{language}</span>}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {/* Theme Toggle */}
+      <div className="border-t p-2">
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-3"
+          onClick={toggleTheme}
+        >
+          {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          {isOpen && <span>{isDark ? "Light Mode" : "Dark Mode"}</span>}
+        </Button>
+      </div>
+    </div>
   );
 };

@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from rest_framework import generics, status
-from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from .models import CodeSnippet, Comment
-from .serializers import CodeSnippetSerializer, SavedSnippetSerializer, CommentSerializer
+from rest_framework.views import APIView
+from .models import CodeSnippet, Comment, ErrorSolution, UserSolution, SaveSolution
+from .serializers import CodeSnippetSerializer, CommentSerializer, ErrorSolutionSerializer, UserSolutionSerializer, SaveSolutionSerializer
 
 class CodeSnippetList(generics.ListCreateAPIView):
     queryset = CodeSnippet.objects.all()
@@ -53,6 +54,91 @@ class CommentLikeView(APIView):
                 {"error": "Comment not found"}, 
                 status=status.HTTP_404_NOT_FOUND
             )
+        
+
+class ErrorSolutionListView(generics.ListCreateAPIView):
+    queryset = ErrorSolution.objects.all()
+    serializer_class = ErrorSolutionSerializer
+
+
+class ErrorSolutionDetailViewUpdate(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ErrorSolution.objects.all()
+    serializer_class = ErrorSolutionSerializer
+
+    def get(self, request, pk):
+        try:
+            error_solution = self.get_object()
+            serializer = self.get_serializer(error_solution)
+            return Response(serializer.data)
+        except ErrorSolution.DoesNotExist:
+            return Response(
+                {"error": "Error solution not found"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+class UserSolutionView(generics.ListCreateAPIView):
+    serializer_class = UserSolutionSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return UserSolution.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class RunUserSolutionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        error_id = request.data.get('error')
+        code = request.data.get('code')
+        
+        if not error_id or not code:
+            return Response(
+                {"error": "Both error_id and code are required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            # Create a new user solution
+            solution = UserSolution.objects.create(
+                error_id=error_id,
+                user=request.user,
+                code=code,
+                success=True  # You might want to add validation logic here
+            )
+            
+            serializer = UserSolutionSerializer(solution)
+            return Response(serializer.data)
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+class UserSolutionDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = UserSolutionSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return UserSolution.objects.filter(user=self.request.user)
+
+class SaveSolutionView(generics.ListCreateAPIView):
+    serializer_class = SaveSolutionSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return SaveSolution.objects.filter(user=self.request.user)
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class SaveSolutionDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = SaveSolutionSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return SaveSolution.objects.filter(user=self.request.user)
 
 
 

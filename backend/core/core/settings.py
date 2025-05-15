@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'djoser',
 
     'snippet',
+    'excercises',
+    'quiz',
     'ai',
     'api',
     'users',

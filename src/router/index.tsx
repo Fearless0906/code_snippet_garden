@@ -1,5 +1,8 @@
 import { createBrowserRouter, Navigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Suspense } from "react";
+import { RootState } from "../auth/store/store";
+import SpinnerLoader from "../components/Loader/SpinnerLoader";
 import Index from "../pages/Index";
 import Login from "../auth/Login";
 import Signup from "../auth/Signup";
@@ -9,13 +12,17 @@ import SnippetDetailPage from "../pages/SnippetDetail";
 import NotFound from "../pages/NotFound";
 import ForgotPassword from "../auth/Forgot-password";
 import Layout from "../components/Layout";
-import { RootState } from "../auth/store/store";
-import AboutPage from "../pages/About";
+import Contact from "../pages/Contact";
+import About from "../pages/About";
 import TopicsPage from "../pages/Topics";
 import LanguagesPage from "../pages/Languages";
 import Home from "../pages/Home";
 import SnippetGenerator from "../components/SnippetGenerator";
 import MarksPage from "../pages/Marks";
+import ErrorSolutions from "../pages/ErrorSolutions";
+import ErrorDetail from "../pages/ErrorDetail";
+import PracticeExercises from "../pages/PracticeExercises";
+import Quiz from "../pages/Quiz";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
@@ -31,7 +38,11 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: (
+      <Suspense fallback={<SpinnerLoader />}>
+        <Home />
+      </Suspense>
+    ),
   },
   {
     path: "/login",
@@ -56,7 +67,9 @@ const router = createBrowserRouter([
   {
     element: (
       <ProtectedRoute>
-        <Layout />
+        <Suspense fallback={<div>Loading...</div>}>
+          <Layout />
+        </Suspense>
       </ProtectedRoute>
     ),
     children: [
@@ -74,7 +87,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/about",
-        element: <AboutPage />,
+        element: <About />,
+      },
+      {
+        path: "contact",
+        element: <Contact />,
       },
       {
         path: "/snippet-generator",
@@ -87,6 +104,22 @@ const router = createBrowserRouter([
       {
         path: "/dashboard/code-snippet/:id",
         element: <SnippetDetailPage />,
+      },
+      {
+        path: "/dashboard/code-error",
+        element: <ErrorSolutions />,
+      },
+      {
+        path: "/dashboard/code-error/:id",
+        element: <ErrorDetail />,
+      },
+      {
+        path: "/dashboard/exercises", // Update this line to match sidebar
+        element: <PracticeExercises />,
+      },
+      {
+        path: "/dashboard/quiz",
+        element: <Quiz />,
       },
     ],
   },

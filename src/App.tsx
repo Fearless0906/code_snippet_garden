@@ -1,12 +1,13 @@
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Toaster as Sonner } from "./components/ui/sonner";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "react-router-dom";
 import router from "./router";
 import { setUser } from "./auth/store/slices/authSlice";
 import { ThemeProvider } from "./components/ui/theme-provider";
+import { Toaster } from "sonner";
+import SpinnerLoader from "./components/Loader/SpinnerLoader";
 
 const queryClient = new QueryClient();
 
@@ -33,9 +34,11 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Sonner />
+        <Toaster position="top-center" />
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-          <RouterProvider router={router} />
+          <Suspense fallback={<SpinnerLoader />}>
+            <RouterProvider router={router} />
+          </Suspense>
         </ThemeProvider>
       </TooltipProvider>
     </QueryClientProvider>
