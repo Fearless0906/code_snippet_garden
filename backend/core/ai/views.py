@@ -31,7 +31,7 @@ def generate_snippet_metadata(request):
         # Configure Gemini API
         genai.configure(api_key=settings.GEMINI_API_KEY)
 
-        model = genai.GenerativeModel('gemini-1.5-pro-latest')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         logger.info(f"Sending request to Gemini API with code length: {len(snippet_code)}")
 
         prompt = f'''Analyze the following code snippet and generate structured metadata.
@@ -131,7 +131,7 @@ def generate_code_snippet(request):
         # Configure Gemini API
         genai.configure(api_key=settings.GEMINI_API_KEY)
 
-        model = genai.GenerativeModel('gemini-1.5-pro-latest')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         logger.info(f"Sending prompt to Gemini API: {prompt_text}")
 
         # Create the prompt to Gemini

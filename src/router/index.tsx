@@ -17,12 +17,7 @@ import About from "../pages/About";
 import TopicsPage from "../pages/Topics";
 import LanguagesPage from "../pages/Languages";
 import Home from "../pages/Home";
-import SnippetGenerator from "../components/SnippetGenerator";
 import MarksPage from "../pages/Marks";
-import ErrorSolutions from "../pages/ErrorSolutions";
-import ErrorDetail from "../pages/ErrorDetail";
-import PracticeExercises from "../pages/PracticeExercises";
-import Quiz from "../pages/Quiz";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
@@ -94,32 +89,12 @@ const router = createBrowserRouter([
         element: <Contact />,
       },
       {
-        path: "/snippet-generator",
-        element: <SnippetGenerator />,
-      },
-      {
         path: "/marks",
         element: <MarksPage />,
       },
       {
         path: "/dashboard/code-snippet/:id",
         element: <SnippetDetailPage />,
-      },
-      {
-        path: "/dashboard/code-error",
-        element: <ErrorSolutions />,
-      },
-      {
-        path: "/dashboard/code-error/:id",
-        element: <ErrorDetail />,
-      },
-      {
-        path: "/dashboard/exercises", // Update this line to match sidebar
-        element: <PracticeExercises />,
-      },
-      {
-        path: "/dashboard/quiz",
-        element: <Quiz />,
       },
     ],
   },

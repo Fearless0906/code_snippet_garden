@@ -14,11 +14,12 @@ import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { decrementSavedCount } from "../auth/store/slices/savedSnippetsSlice";
 import { getLanguageIcon } from "../data/languageIcons";
+import SpinnerLoader from "../components/Loader/SpinnerLoader";
 
 export default function MarksPage() {
   const dispatch = useDispatch();
   const [savedSnippets, setSavedSnippets] = useState<CodeSnippet[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -28,6 +29,7 @@ export default function MarksPage() {
         const snippets = await getSavedSnippets();
         // Filter snippets where saved is true
         setSavedSnippets(snippets);
+        setLoading(true);
       } catch (error) {
         console.error("Error fetching saved snippets:", error);
         setError("Failed to load saved snippets.");
@@ -49,6 +51,23 @@ export default function MarksPage() {
       console.error("Failed to unsave snippet:", error);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <SpinnerLoader />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container max-w-7xl mx-auto py-10 px-4">
+        <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
+        <p className="text-muted-foreground">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container max-w-7xl mx-auto py-10 px-4">
