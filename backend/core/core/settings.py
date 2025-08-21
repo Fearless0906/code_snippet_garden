@@ -27,7 +27,6 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = True
 
 # Gemini API settings
-GEMINI_API_KEY = env('GEMINI_API_KEY')
 
 ALLOWED_HOSTS = []
 
@@ -52,9 +51,6 @@ INSTALLED_APPS = [
     'djoser',
 
     'snippet',
-    'excercises',
-    'quiz',
-    'ai',
     'api',
     'users',
 ]

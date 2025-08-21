@@ -21,6 +21,8 @@ import {
   SiSwift,
   SiKotlin,
   SiDart,
+  SiDjango,
+  SiOpenai,
 } from "react-icons/si";
 import React from "react";
 
@@ -31,27 +33,33 @@ const wrapIcon = (Icon: React.ElementType) => {
 };
 
 export const getLanguageIcon = (language: string): React.ElementType => {
+  // Normalize the language name to handle case-insensitive matching
+  const normalizedLanguage = language.toLowerCase();
+
   const icons: Record<string, React.ElementType> = {
-    JavaScript: wrapIcon(DiJavascript1),
-    TypeScript: wrapIcon(SiTypescript),
-    Python: wrapIcon(DiPython),
-    Java: wrapIcon(DiJava),
-    HTML: wrapIcon(DiHtml5),
-    CSS: wrapIcon(DiCss3),
-    PHP: wrapIcon(DiPhp),
-    Ruby: wrapIcon(DiRuby),
-    "C++": wrapIcon(SiCplusplus),
-    "C#": wrapIcon(DiFsharp),
-    Go: wrapIcon(DiGo),
-    Rust: wrapIcon(SiRust),
-    Swift: wrapIcon(SiSwift),
-    Kotlin: wrapIcon(SiKotlin),
-    Dart: wrapIcon(SiDart),
-    React: wrapIcon(DiReact),
-    Angular: wrapIcon(DiAngularSimple),
-    MongoDB: wrapIcon(DiMongodb),
-    MySQL: wrapIcon(DiMysql),
+    javascript: wrapIcon(DiJavascript1),
+    typescript: wrapIcon(SiTypescript),
+    python: wrapIcon(DiPython),
+    java: wrapIcon(DiJava),
+    html: wrapIcon(DiHtml5),
+    css: wrapIcon(DiCss3),
+    php: wrapIcon(DiPhp),
+    ruby: wrapIcon(DiRuby),
+    "c++": wrapIcon(SiCplusplus),
+    "c#": wrapIcon(DiFsharp),
+    go: wrapIcon(DiGo),
+    rust: wrapIcon(SiRust),
+    swift: wrapIcon(SiSwift),
+    kotlin: wrapIcon(SiKotlin),
+    dart: wrapIcon(SiDart),
+    react: wrapIcon(DiReact),
+    angular: wrapIcon(DiAngularSimple),
+    mongodb: wrapIcon(DiMongodb),
+    mysql: wrapIcon(DiMysql),
+    django: wrapIcon(SiDjango),
+    chatgpt: wrapIcon(SiOpenai),
+    openai: wrapIcon(SiOpenai),
   };
 
-  return icons[language] || wrapIcon(Code);
+  return icons[normalizedLanguage] || wrapIcon(Code);
 };

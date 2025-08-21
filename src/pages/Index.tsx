@@ -11,6 +11,7 @@ import SpinnerLoader from "../components/Loader/SpinnerLoader";
 import { useDebounce } from "../hooks/use-debounce";
 import { useSelector } from "react-redux";
 import { RootState } from "../auth/store/store";
+import AddSnippetDialog from "../components/AddSnippetDialog";
 
 const Index: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -86,8 +87,10 @@ const Index: React.FC = () => {
   return (
     <div className="p-6">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-6">
+        <div className="mb-6 flex flex-row items-center justify-between">
           <h1 className="text-2xl font-bold">Code Snippets</h1>
+
+          <AddSnippetDialog onSnippetCreated={() => {}} />
         </div>
 
         <SnippetList

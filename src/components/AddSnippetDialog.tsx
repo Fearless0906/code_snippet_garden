@@ -19,11 +19,11 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
-import { createSnippet, CreateSnippetData } from "../data/snippet";
+import { createSnippet } from "../data/snippet";
 import SpinnerLoader from "./Loader/SpinnerLoader";
 import { ScrollArea } from "./ui/scroll-area";
-import SnippetForm from "./Ai_Snippets";
 import { Separator } from "./ui/separator";
+import { CreateSnippetData } from "../types/types";
 
 interface AddSnippetDialogProps {
   onSnippetCreated: () => void;
@@ -89,27 +89,12 @@ const AddSnippetDialog = ({ onSnippetCreated }: AddSnippetDialogProps) => {
     }));
   };
 
-  const handleAIGenerated = (
-    tags: string[],
-    description: string,
-    language: string,
-    title: string
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      summary: description,
-      tags: tags,
-      language: language.charAt(0).toUpperCase() + language.slice(1),
-      title: title,
-    }));
-  };
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="default">Add Snippet</Button>
+        <Button variant="default">New Snippet</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[1200px] bg-background max-h-[97vh]">
+      <DialogContent className="sm:max-w-[800px] bg-background max-h-[97vh] w-full">
         <DialogHeader className="sticky top-0 z-10 bg-background pb-6 border-b w-[90%]">
           <DialogTitle className="text-2xl font-semibold ">
             Add New Code Snippet
@@ -120,11 +105,8 @@ const AddSnippetDialog = ({ onSnippetCreated }: AddSnippetDialogProps) => {
         </DialogHeader>
         <ScrollArea className="max-h-[calc(97vh-8rem)] pr-4">
           <div className="flex gap-8">
-            <div className="w-1/2">
-              <SnippetForm onGenerateResults={handleAIGenerated} />
-            </div>
             <Separator orientation="vertical" className="h-auto" />
-            <div className="w-1/2">
+            <div className="w-full">
               <form onSubmit={handleSubmit} className="space-y-6 py-6">
                 <Input
                   name="title"
@@ -181,7 +163,7 @@ const AddSnippetDialog = ({ onSnippetCreated }: AddSnippetDialogProps) => {
                     <Select
                       name="difficulty_level"
                       value={formData.difficulty_level}
-                      onValueChange={(value) =>
+                      onValueChange={(value: string) =>
                         setFormData((prev) => ({
                           ...prev,
                           difficulty_level:
@@ -206,7 +188,7 @@ const AddSnippetDialog = ({ onSnippetCreated }: AddSnippetDialogProps) => {
                     <Select
                       name="is_public"
                       value={formData.is_public ? "public" : "private"}
-                      onValueChange={(value) =>
+                      onValueChange={(value: string) =>
                         setFormData((prev) => ({
                           ...prev,
                           is_public: value === "public",

@@ -26,7 +26,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useEffect } from "react";
 import { getSavedSnippets } from "../data/snippet";
 import { setSavedCount } from "../auth/store/slices/savedSnippetsSlice";
-import AddSnippetDialog from "./AddSnippetDialog";
 
 interface HeaderProps {
   onSidebarToggle?: () => void;
@@ -96,8 +95,6 @@ const Header = ({ onSidebarToggle }: HeaderProps) => {
       </div>
 
       <div className="flex items-center gap-3 px-4">
-        <AddSnippetDialog onSnippetCreated={() => {}} />
-
         {isAuthenticated ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

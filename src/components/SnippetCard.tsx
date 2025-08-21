@@ -122,7 +122,7 @@ const SnippetCard = ({ snippet, onUpdate, saved }: SnippetCardProps) => {
         toast.success("Snippet updated successfully");
         setIsEditing(false);
       }
-    } catch (error) {
+    } catch (error: any) {
       toast.error("Failed to update snippet");
     } finally {
       setIsSaving(false);

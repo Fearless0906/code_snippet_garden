@@ -1,4 +1,4 @@
-import { Code, Home, Menu, Moon, Sun, Globe, Tags, Cpu } from "lucide-react";
+import { Code, Home, Menu, Moon, Sun, Globe, Tags } from "lucide-react";
 import { Button } from "./ui/button";
 import { cn } from "../lib/utils";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -43,10 +43,6 @@ interface SidebarNavigationProps {
 }
 
 const navItems = [
-  { label: "Errors", href: "/dashboard/code-error", icon: Code },
-  { label: "Exercises", href: "/dashboard/exercises", icon: Code }, // Update this line
-  { label: "Quiz", href: "/dashboard/quiz", icon: Code },
-  { label: "Code with AI", href: "/snippet-generator", icon: Cpu },
   { label: "Languages", href: "/languages", icon: Globe },
   { label: "Topics", href: "/topics", icon: Tags },
   { label: "About", href: "/about", icon: Code },
@@ -108,16 +104,15 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           />
 
           {/* Add Navigation Items */}
-          {isOpen &&
-            navItems.map((item) => (
-              <SidebarItem
-                key={item.href}
-                icon={item.icon}
-                label={item.label}
-                active={location.pathname === item.href}
-                onClick={() => navigate(item.href)}
-              />
-            ))}
+          {navItems.map((item) => (
+            <SidebarItem
+              key={item.href}
+              icon={item.icon}
+              label={isOpen ? item.label : ""}
+              active={location.pathname === item.href}
+              onClick={() => navigate(item.href)}
+            />
+          ))}
         </div>
 
         {/* Languages Section */}
@@ -128,20 +123,13 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
             </p>
           )}
           {languages.map((language) => (
-            <Button
+            <SidebarItem
               key={language}
-              variant="ghost"
-              className={cn(
-                "w-full justify-start gap-3 px-3 py-2 text-sm font-medium",
-                location.search.includes(`language=${language}`)
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
-              )}
+              icon={() => <LanguageIcon language={language} />}
+              label={isOpen ? language : ""}
+              active={location.search.includes(`language=${language}`)}
               onClick={() => navigate(`/dashboard?language=${language}`)}
-            >
-              <LanguageIcon language={language} />
-              {isOpen && <span>{language}</span>}
-            </Button>
+            />
           ))}
         </div>
       </div>

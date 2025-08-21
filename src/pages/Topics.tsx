@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getTags } from "../data/snippet";
-import { Globe, Search, Layers } from "lucide-react";
+import { Search, Layers } from "lucide-react";
 import {
   Card,
   CardHeader,
