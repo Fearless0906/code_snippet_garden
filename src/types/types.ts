@@ -14,10 +14,17 @@ export interface CreateSnippetData {
   title: string;
   language: string;
   summary: string;
-  snippet: string;
+  snippet: SnippetItem[];
   tags: string | string[];
   difficulty_level: "beginner" | "intermediate" | "advanced";
   is_public: boolean;
+}
+
+export interface SnippetItem {
+  title: string;
+  description: string;
+  code: string;
+  order?: number;
 }
 
 export interface CodeExecutionResult {

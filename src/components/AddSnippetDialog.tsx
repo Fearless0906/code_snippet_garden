@@ -35,7 +35,7 @@ const AddSnippetDialog = ({ onSnippetCreated }: AddSnippetDialogProps) => {
     title: "",
     language: "",
     summary: "",
-    snippet: "",
+    snippet: [{ title: "", description: "", code: "" }],
     tags: [],
     difficulty_level: "beginner",
     is_public: true,
@@ -63,7 +63,7 @@ const AddSnippetDialog = ({ onSnippetCreated }: AddSnippetDialogProps) => {
         title: "",
         language: "",
         summary: "",
-        snippet: "",
+        snippet: [],
         tags: [],
         difficulty_level: "beginner",
         is_public: true,
@@ -128,17 +128,39 @@ const AddSnippetDialog = ({ onSnippetCreated }: AddSnippetDialogProps) => {
                   name="summary"
                   value={formData.summary}
                   onChange={handleChange}
-                  placeholder="Description"
-                  className="min-h-[100px]"
-                />
-
-                <Textarea
-                  name="snippet"
-                  value={formData.snippet}
-                  onChange={handleChange}
-                  placeholder="Code Snippet"
+                  placeholder="Code Summary"
                   className="min-h-[200px] font-mono text-sm"
                 />
+
+                <h3 className="text-xl font-semibold mt-4">Snippets</h3>
+                {formData.snippet.map((snipt, idx) => (
+                  <div
+                    key={idx}
+                    className="p-5 rounded mb-4 gap-5 py-6 flex flex-col"
+                  >
+                    <Textarea
+                      name="title"
+                      value={snipt.title}
+                      onChange={handleChange}
+                      placeholder="Snippet title"
+                      className="min-h-[100px]"
+                    />
+                    <Textarea
+                      name="description"
+                      value={snipt.description}
+                      onChange={handleChange}
+                      placeholder="Snippet description"
+                      className="min-h-[100px]"
+                    />
+                    <Textarea
+                      name="code"
+                      value={snipt.code}
+                      onChange={handleChange}
+                      placeholder="Snippet code"
+                      className="min-h-[100px]"
+                    />
+                  </div>
+                ))}
 
                 <Input
                   name="tags"
