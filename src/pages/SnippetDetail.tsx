@@ -18,6 +18,7 @@ import {
 } from "../auth/store/slices/savedSnippetsSlice";
 import CommentSection from "../components/Snippet/CommentSection";
 import { Separator } from "../components/ui/separator";
+import { SnippetItem } from "../types/types";
 
 const SnippetDetailPage = () => {
   const dispatch = useDispatch();
@@ -154,12 +155,25 @@ const SnippetDetailPage = () => {
             <div>
               <h2 className="text-xl font-medium mb-4">Code Example</h2>
               <div className="rounded-lg overflow-hidden shadow-lg">
-                <CodeBlock
-                  code={snippet.snippet}
-                  language={snippet.language.toLowerCase()}
-                  filename={`example.${snippet.language.toLowerCase()}`}
-                  className="rounded-none"
-                />
+                {snippet.snippet.map((snip: SnippetItem, index: number) => (
+                  <div key={index} className="mb-6 last:mb-0">
+                    {snip.title && (
+                      <h3 className="text-lg font-semibold mb-2">
+                        {snip.title}
+                      </h3>
+                    )}
+                    {snip.description && (
+                      <p className="text-muted-foreground mb-2">
+                        {snip.description}
+                      </p>
+                    )}
+                    <CodeBlock
+                      code={snip.code}
+                      language={snippet.language.toLowerCase()}
+                      className="rounded-t-none border-t"
+                    />
+                  </div>
+                ))}
               </div>
             </div>
 

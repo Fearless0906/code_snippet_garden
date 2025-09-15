@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface SavedSnippetsState {
   count: number;
@@ -9,7 +9,7 @@ const initialState: SavedSnippetsState = {
 };
 
 const savedSnippetsSlice = createSlice({
-  name: 'savedSnippets',
+  name: "savedSnippets",
   initialState,
   reducers: {
     setSavedCount: (state, action: PayloadAction<number>) => {
@@ -24,5 +24,6 @@ const savedSnippetsSlice = createSlice({
   },
 });
 
-export const { setSavedCount, incrementSavedCount, decrementSavedCount } = savedSnippetsSlice.actions;
+export const { setSavedCount, incrementSavedCount, decrementSavedCount } =
+  savedSnippetsSlice.actions;
 export default savedSnippetsSlice.reducer;
